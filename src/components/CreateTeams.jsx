@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTeamContext } from "../context/TeamContext";
 
 const CreateTeams = ({ closeModal }) => {
     const navigate = useNavigate();
+    const { updateTeams } = useTeamContext();
   const [teams, setTeams] = useState({
     team1: '',
     team2: '',
@@ -17,10 +19,9 @@ const CreateTeams = ({ closeModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your form submission logic here
-    // ...
 
-    // Close the modal after form submission
+    updateTeams({ team1: teams.team1 , team2: teams.team2});
+
     alert(`Team 1: ${teams.team1}\nTeam 2: ${teams.team2}`);
     navigate("/admin-dashboard")
     closeModal();

@@ -16,9 +16,6 @@ const Admin = () => {
   }
 
 
-
-
-
   return (
     <div className='flex flex-col h-screen justify-center items-center bg-slate-200'>
       <div className=''>
