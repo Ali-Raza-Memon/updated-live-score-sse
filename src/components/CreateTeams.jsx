@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTeamContext } from "../context/TeamContext";
 
 const CreateTeams = ({ closeModal }) => {
-    const navigate = useNavigate();
-    const { updateTeams } = useTeamContext();
+  const navigate = useNavigate();
   const [teams, setTeams] = useState({
     team1: '',
     team2: '',
@@ -17,14 +16,34 @@ const CreateTeams = ({ closeModal }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    updateTeams({ team1: teams.team1 , team2: teams.team2});
+    try {
+      const response = await fetch("http://localhost:5000/update-teams", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          team1: teams.team1,
+          team2: teams.team2,
+        }),
+      });
 
-    alert(`Team 1: ${teams.team1}\nTeam 2: ${teams.team2}`);
-    navigate("/admin-dashboard")
-    closeModal();
+      const data = await response.json();
+      console.log(data);
+
+      if (response.ok) {
+        navigate("/admin-dashboard");
+        closeModal();
+      } else {
+        alert("Failed to create teams. Please try again");
+      }
+    } catch (error) {
+      console.log("Error sending teams to the backend:", error);
+      alert("An error occurred. Please try again later");
+    }
   };
 
   return (
