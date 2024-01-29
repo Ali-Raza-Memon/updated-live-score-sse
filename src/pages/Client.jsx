@@ -1,50 +1,83 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Client = () => {
-  const [team, setTeam] = useState({ team1: 0, team2: 0 });
+  // Retrieve initial scores and teams from localStorage on component mount
+  const storedScores = localStorage.getItem("teamScores");
+  const initialScores = storedScores ? JSON.parse(storedScores) : { team1: 0, team2: 0 };
+  
+  const storedTeams = localStorage.getItem("receivedTeams");
+  const initialTeams = storedTeams ? JSON.parse(storedTeams) : { team1: "", team2: "" };
+  
+  const [team, setTeam] = useState(initialScores);
+  const [receivedTeams, setReceivedTeams] = useState(initialTeams);
 
   useEffect(() => {
-    // Create an EventSource to listen for updates
-    const eventSource = new EventSource("http://localhost:5000/get-score-updates");
+    // Create an EventSource to listen for score updates
+    const scoreEventSource = new EventSource("http://localhost:5000/get-score-updates");
 
-    // Event listener for incoming updates
-    eventSource.onmessage = (event) => {
+    // Event listener for incoming score updates
+    scoreEventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
       // Check the team from the backend
-      if (data.team === "team1") {
-        setTeam({ ...team, team1: data.score });
-      } else if (data.team === "team2") {
-        setTeam({ ...team, team2: data.score });
+      if (data.team === "team1" || data.team === "team2") {
+        setTeam((prevTeam) => ({
+          ...prevTeam,
+          [data.team]: data.score
+        }));
+
+        // Save updated scores to localStorage
+        localStorage.setItem("teamScores", JSON.stringify({
+          ...initialScores,
+          [data.team]: data.score
+        }));
       }
     };
 
     // Clean up the EventSource on component unmount
     return () => {
-      eventSource.close();
+      scoreEventSource.close();
     };
-  }, [team, setTeam]);
+  }, [initialScores]);
 
+  useEffect(() => {
+    // Create an EventSource to listen for teams updates
+    const teamsEventSource = new EventSource("http://localhost:5000/get-teams-updates");
 
+    // Event listener for incoming teams updates
+    teamsEventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
 
+      setReceivedTeams(data);
 
+      // Save the received teams to localStorage
+      localStorage.setItem("receivedTeams", JSON.stringify(data));
 
+      // Check the teams from the backend
+      console.log("Teams are:", data);
+      // You can update your state or perform other actions based on the received data
+    };
+
+    // Clean up the EventSource on component unmount
+    return () => {
+      teamsEventSource.close();
+    };
+  }, []);
 
   return (
     <div className="h-screen bg-slate-200">
       <div className="flex flex-col text-center py-4">
-        <h1 className="text-3xl font-serif font-bold underline ">
+        <h1 className="text-3xl font-serif font-bold underline">
           Welcome to Live Score App
         </h1>
         <p className="">Here is the live teams with score</p>
 
         <div className="flex flex-col items-center justify-center py-20">
-          <h1>Team-01 vs Team-02</h1>
+          <h1 className="text-3xl font-bold font-serif">{receivedTeams.team1} vs {receivedTeams.team2}</h1>
           <div className="h-80 w-1/2 bg-slate-400 flex items-center justify-center">
             <div className="my-12">
-              <p className="">Team-01 score is: {team.team1}</p>
-              <p className="">Team-02 score is: {team.team2}</p>
+              <p className="">{receivedTeams.team1} score is: <strong>{team.team1}</strong> </p>
+              <p className="">{receivedTeams.team2} score is: <strong>{team.team2}</strong> </p>
             </div>
           </div>
         </div>
