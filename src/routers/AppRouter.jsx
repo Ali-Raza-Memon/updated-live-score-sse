@@ -5,13 +5,17 @@ import { TeamProvider } from '../context/TeamContext';
 import CreatedTeamsAdmin from '../pages/CreatedTeamsAdmin';
 import '../App.css'
 import Client from '../pages/Client';
+import Navbar from '../components/Navbar';
 
 
 
 
 const AppRouter = () =>{
     return(
-        <Router>
+        <>
+        
+        <Navbar />
+        {/* <Router>
             <TeamProvider>
             <Routes>
                 <Route path="/" element = {<Client/>} />
@@ -19,7 +23,8 @@ const AppRouter = () =>{
                 <Route path="/admin-dashboard" element={ <CreatedTeamsAdmin /> } />
             </Routes>
             </TeamProvider>
-        </Router>
+        </Router> */}
+        </>
     )
 
 }
