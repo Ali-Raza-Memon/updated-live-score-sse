@@ -28,15 +28,15 @@ const Admin = () => {
         </button>
       </div>
 
-      {/* Modal */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="relative p-4 w-full max-w-md">
-            {/* Modal content */}
+          
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-              {/* Modal header and body */}
+              
               <div className="p-4 md:p-5">
-                {/* Your form content here */}
+              
                 <CreateTeams closeModal={closeModal} />
                 
               </div>

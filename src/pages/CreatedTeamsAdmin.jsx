@@ -164,7 +164,7 @@ const CreatedTeamsAdmin = () => {
               Update Score Team-02
             </button>
           </div>
-          <button className="bg-slate-500 my-7" onClick={handleRefresh}>
+          <button className="bg-slate-500 px-3 py-2 rounded-2xl text-white my-7" onClick={handleRefresh}>
             Refresh
           </button>
         </div>
